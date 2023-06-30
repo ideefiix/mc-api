@@ -1,0 +1,10 @@
+﻿[
+  {"TypeName":  "resource", "TypeId":  1},
+  {"TypeName":  "helm", "TypeId":  2},
+  {"TypeName":  "chest", "TypeId":  3},
+  {"TypeName":  "legs", "TypeId":  4},
+  {"TypeName":  "boots", "TypeId":  5},
+  {"TypeName":  "weapon", "TypeId":  6},
+  {"TypeName":  "pet", "TypeId":  7},
+  {"TypeName":  "consumable", "TypeId":  8}
+]

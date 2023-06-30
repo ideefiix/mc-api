@@ -1,0 +1,20 @@
+﻿[
+  {
+    "ItemIndex": 1,
+    "Name": "Wood",
+    "Description": "Good old woodie.",
+    "TypeId": 1,
+    "ImagePath": "DAL/DBinitialization/images/wood300.webp",
+    "MaxDurability": 0,
+    "Protection": 0
+  },
+  {
+    "ItemIndex": 2,
+    "Name": "Leather Helmet",
+    "Description": "It ain't much, but it's honest work.",
+    "TypeId": 2,
+    "ImagePath": "DAL/DBinitialization/images/leather_helm_350.webp",
+    "MaxDurability": 10,
+    "Protection": 5
+  }
+]
