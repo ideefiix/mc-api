@@ -36,8 +36,7 @@ public class DatabaseContext : DbContext
             .HasOne(e => e.Item)
             .WithOne();*/
         /*modelBuilder.Entity<PlayerEquippedItem>().HasKey(e => new { e.PlayerId, e.ItemTypeId });*/
-
-
+        
         modelBuilder.Entity<Item>().ToTable("Items");
         modelBuilder.Entity<ItemImage>().ToTable("ItemImages");
         modelBuilder.Entity<ItemType>().ToTable("ItemTypes");

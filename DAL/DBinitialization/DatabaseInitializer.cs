@@ -59,6 +59,8 @@ public static class DatabaseInitializer
       }
       
       context.SaveChanges();
+      
+      // SEED DATABASE
 
       var players = new Player[]
       {
