@@ -3,6 +3,8 @@
 public class Player
 {
     public Guid PlayerId { get; set; }
+    public String PlayerName { get; set; }
+    public String PasswordHash { get; set; }
     public int MaxHp { get; set; }
     public int Hp { get; set; }
     /*public virtual ICollection<PlayerEquippedItem> EquippedItems { get; set; }*/

@@ -1,3 +1,4 @@
 ﻿## Command to generate controller
 
 dotnet aspnet-codegenerator controller -m Gear -dc DatabaseContext -async -api -name GearController -outDir Controllers
+dotnet aspnet-codegenerator controller -m Player -dc DatabaseContext -async -api -name PlayerController -outDir Controllers

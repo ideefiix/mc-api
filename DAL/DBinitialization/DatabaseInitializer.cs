@@ -61,10 +61,12 @@ public static class DatabaseInitializer
       context.SaveChanges();
       
       // SEED DATABASE
+      
+      string hashedPassword = BCrypt.Net.BCrypt.HashPassword("admin");
 
       var players = new Player[]
       {
-         new Player { MaxHp = 100, Hp = 100, Dmg = 0, Defence = 0 }
+         new Player { PlayerName = "admin", PasswordHash = hashedPassword, MaxHp = 100, Hp = 100, Dmg = 0, Defence = 0 }
       };
       context.Players.AddRange(players);
 
