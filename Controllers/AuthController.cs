@@ -18,7 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -31,7 +31,7 @@ namespace Api.Controllers
             _config = config;
         }
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<ActionResult> Login(LoginDTO req)
         {
             Player? player = _context.Players.FirstOrDefault(p => p.PlayerName == req.Name);
@@ -49,7 +49,7 @@ namespace Api.Controllers
         {
             List<Claim> claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, player.PlayerName),
+                new Claim("playerName", player.PlayerName),
                 new Claim("id", player.PlayerId.ToString())
             };
 
