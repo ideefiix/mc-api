@@ -66,22 +66,20 @@ public static class DatabaseInitializer
 
       var players = new Player[]
       {
-         new Player { PlayerName = "admin", PasswordHash = hashedPassword, MaxHp = 100, Hp = 100, Dmg = 0, Defence = 0 }
+         new Player { PlayerId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001"), PlayerName = "admin", PasswordHash = hashedPassword, MaxHp = 100, Hp = 100, Dmg = 0, Defence = 0 }
       };
       context.Players.AddRange(players);
 
-      /*var itemEntity = context.Items.Find(1);
+      var itemEntity = context.Items.Find(1);
 
       var playerItem = new PlayerItem()
       {
-         Name = itemEntity.Name,
-         Description = itemEntity.Description,
-         Type = itemEntity.Type,
+         Item = itemEntity,
          Owner = players[0],
          Quantity = 5
       };
 
-      context.PlayerItems.Add(playerItem);*/
+      context.PlayerItems.Add(playerItem);
 
       context.SaveChanges();
       

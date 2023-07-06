@@ -7,7 +7,7 @@ public class Player
     public String PasswordHash { get; set; }
     public int MaxHp { get; set; }
     public int Hp { get; set; }
-    /*public virtual ICollection<PlayerEquippedItem> EquippedItems { get; set; }*/
+
     public virtual ICollection<PlayerItem> Items { get; set; }
     public int Dmg { get; set; }
     public int Defence { get; set; }
