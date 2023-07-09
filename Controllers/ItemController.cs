@@ -19,8 +19,6 @@ public class ItemController : ControllerBase
     [HttpGet("{playerId}")]
     public async Task<ActionResult<IEnumerable<PlayerItem>>> GetItemsForPlayer(Guid playerId)
     {
-       var player = _context.Players.FindAsync(playerId);
-
-       return await _context.PlayerItems.Where(item => item.Owner.PlayerId == playerId).ToListAsync();
+        return await _context.PlayerItems.Where(item => item.Owner.PlayerId == playerId).ToListAsync();
     }
 }

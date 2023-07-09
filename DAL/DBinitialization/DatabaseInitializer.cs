@@ -52,8 +52,6 @@ public static class DatabaseInitializer
             Description = dto.Description,
             Type = itemTypes.First(type => type.TypeId == dto.TypeId),
             Image = imageEntity,
-            MaxDurability = dto.MaxDurability,
-            Protection = dto.Protection
          };
          context.Items.AddRange(item);
       }
@@ -71,15 +69,23 @@ public static class DatabaseInitializer
       context.Players.AddRange(players);
 
       var itemEntity = context.Items.Find(1);
-
+      var itemEntity2 = context.Items.Find(2);
+      
       var playerItem = new PlayerItem()
       {
          Item = itemEntity,
          Owner = players[0],
          Quantity = 5
       };
+      var playerItem2 = new PlayerItem()
+      {
+         Item = itemEntity2,
+         Owner = players[0],
+         Quantity = 1
+      };
 
       context.PlayerItems.Add(playerItem);
+      context.PlayerItems.Add(playerItem2);
 
       context.SaveChanges();
       

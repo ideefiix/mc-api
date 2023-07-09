@@ -10,5 +10,5 @@ public class ItemImage
     [Key]
     public Guid ImageId { get; set; } 
     public byte[] Image { get; set; }
-    
+
 }
