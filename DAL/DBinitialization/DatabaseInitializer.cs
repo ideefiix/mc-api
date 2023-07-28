@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Reflection;
 using System.Text.Json;
 using Api.DAL.DTO;
 using Api.Models;
@@ -26,7 +27,7 @@ public static class DatabaseInitializer
       //Load the Items -> Connect with Image and type
 
       var dtoList = JsonSerializer.Deserialize<RegistryItemFromJsonDTO[]>(
-         File.ReadAllText("DAL/DBinitialization/itemRegistry.json"));
+         File.ReadAllText("DAL/DBinitialization/items.json"));
 
 
       foreach (var dto in dtoList)
@@ -56,6 +57,26 @@ public static class DatabaseInitializer
          context.Items.AddRange(item);
       }
       
+      context.SaveChanges();
+      
+      // Load tasks
+      var missionList = JsonSerializer.Deserialize<MissionDto[]>(
+         File.ReadAllText("DAL/DBinitialization/missions.json"));
+
+      var missionsToAdd = new List<Mission>();
+      foreach (var dto in missionList)
+      {
+         missionsToAdd.Add(new Mission
+         {
+            MissionIndex = dto.MissionIndex,
+            Name = dto.Name,
+            Duration = dto.Duration,
+            ItemPool = JsonConverter.SerializeObject(dto.ItemPool),
+            CompletionReward = JsonConverter.SerializeObject(dto.CompletionReward)
+         });
+      }
+      
+      context.Missions.AddRange(missionsToAdd);
       context.SaveChanges();
       
       // SEED DATABASE
@@ -88,32 +109,25 @@ public static class DatabaseInitializer
       context.PlayerItems.Add(playerItem2);
 
       context.SaveChanges();
+
+      var eventData = new ItemFoundEvent()
+      {
+         PlayerId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001"),
+         TaskId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001")
+      };
       
-      /*var itemHelm = context.Items.Find(2);
-
-      var playerHelm = new Equipment
+      var @event = new Event
       {
-         Name = itemHelm.Name,
-         Description = itemHelm.Description,
-         Type = itemHelm.Type,
-         Owner = players[0],
-         Quantity = 1,
-         Equipped = true,
-         MaxDurability = itemHelm.MaxDurability,
-         Durability = itemHelm.MaxDurability,
-         Protection = itemHelm.Protection
+         EventType = typeof(ItemFoundEvent).AssemblyQualifiedName,
+         EventStatus = EventStatus.READY,
+         CreatedAt = DateTime.UtcNow,
+         HandledAt = null,
+         Ntries = 0,
+         Data = JsonConverter.SerializeObject(eventData),
       };
-      context.Equipments.Add(playerHelm);
+
+      context.Events.Add(@event);
       context.SaveChanges();
-
-      var equipHelm = new PlayerEquippedItem
-      {
-         Player = players[0],
-         ItemType = playerHelm.Type,
-         Equipment = playerHelm
-      };
-      context.PlayerEquippedItems.Add(equipHelm);
-      context.SaveChanges();*/
 
    }
 }

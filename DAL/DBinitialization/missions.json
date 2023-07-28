@@ -1,0 +1,19 @@
+﻿[
+  {
+    "MissionIndex": 1,
+    "Name": "Chopping wood",
+    "Duration": 5,
+    "ItemPool": [
+      {
+        "ItemIndex": 1,
+        "Probability": 1
+      }
+    ],
+    "CompletionReward": [
+        {
+          "ItemIndex": 1,
+          "Quantity": 5
+        }
+      ]
+  }
+]

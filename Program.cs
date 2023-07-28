@@ -2,10 +2,12 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Api.DAL;
 using Api.DAL.DBinitialization;
+using Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -79,6 +81,29 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+    q.SchedulerId = "Scheduler-Core";
+    q.UseDefaultThreadPool(tp =>
+    {
+        tp.MaxConcurrency = 2;
+    });
+    
+    var jobKey = new JobKey("PollReadyEventJob");
+    q.AddJob<PollReadyEventJob>(opts => opts.WithIdentity(jobKey));
+    
+    q.AddTrigger(opts => opts
+            .ForJob(jobKey)
+            .WithIdentity("PollReadyEventJob-trigger")
+            .WithCronSchedule("0/10 * * * * ?")
+
+    );
+});
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
+builder.Services.AddScoped<ItemFoundHandler>();
+builder.Services.AddScoped<EventHandlerProvider>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -86,7 +111,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     var context = services.GetRequiredService<DatabaseContext>();
-    //context.Database.EnsureDeleted();
+    context.Database.EnsureDeleted();
     context.Database.EnsureCreated(); // TODO add migrations
     DatabaseInitializer.Initialize(context);
 }
