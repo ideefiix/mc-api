@@ -102,7 +102,7 @@ builder.Services.AddQuartz(q =>
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
-builder.Services.AddScoped<ItemFoundHandler>();
+builder.Services.AddScoped<ItemSpawnHandler>();
 builder.Services.AddScoped<EventHandlerProvider>();
 var app = builder.Build();
 

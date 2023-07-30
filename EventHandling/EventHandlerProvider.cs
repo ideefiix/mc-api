@@ -5,9 +5,9 @@ public class EventHandlerProvider
     private readonly Dictionary<Type, EventHandlerBase> _handlerBindings = new Dictionary<Type, EventHandlerBase>();
     
     public EventHandlerProvider(
-        ItemFoundHandler itemFoundHandler)
+        ItemSpawnHandler itemSpawnHandler)
     {
-        _handlerBindings.Add(typeof(ItemFoundEvent), itemFoundHandler);
+        _handlerBindings.Add(typeof(ItemSpawnEvent), itemSpawnHandler);
     }
     public EventHandlerBase GetHandler(Type eventType)
     {

@@ -14,6 +14,7 @@ public class DatabaseContext : DbContext
     public DbSet<Item> Items { get; set; } = null!;
     public DbSet<ItemImage> ItemImages { get; set; } = null!;
     public DbSet<Mission> Missions { get; set; } = null!;
+    public DbSet<PlayerMission> PlayerMissions { get; set; } = null!;
     public DbSet<ItemType> ItemTypes { get; set; } = null!;
     public DbSet<Equipment> Equipments { get; set; } = null!;
     public DbSet<Event> Events { get; set; } = null!;
@@ -30,5 +31,6 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Equipment>().ToTable("Equipments");
         modelBuilder.Entity<Event>().ToTable("Events");
         modelBuilder.Entity<Mission>().ToTable("Missions");
+        modelBuilder.Entity<PlayerMission>().ToTable("PlayerMissions");
     }
 }

@@ -110,7 +110,7 @@ public static class DatabaseInitializer
 
       context.SaveChanges();
 
-      var eventData = new ItemFoundEvent()
+      var eventData = new ItemSpawnEvent()
       {
          PlayerId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001"),
          TaskId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001")
@@ -118,7 +118,7 @@ public static class DatabaseInitializer
       
       var @event = new Event
       {
-         EventType = typeof(ItemFoundEvent).AssemblyQualifiedName,
+         EventType = typeof(ItemSpawnEvent).AssemblyQualifiedName,
          EventStatus = EventStatus.READY,
          CreatedAt = DateTime.UtcNow,
          HandledAt = null,

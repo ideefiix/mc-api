@@ -2,9 +2,9 @@
 
 namespace Api.Models;
 
-public class ItemFoundHandler : EventHandlerBase
+public class ItemSpawnHandler : EventHandlerBase
 {
-    public ItemFoundHandler(DatabaseContext context) : base(context)
+    public ItemSpawnHandler(DatabaseContext context) : base(context)
     {
     }
 
@@ -12,7 +12,7 @@ public class ItemFoundHandler : EventHandlerBase
     {
         try
         {
-            var eventData = JsonConverter.DeserializeObject<ItemFoundEvent>(@event.Data);
+            var eventData = JsonConverter.DeserializeObject<ItemSpawnEvent>(@event.Data);
             throw new NotImplementedException();
 
         }
