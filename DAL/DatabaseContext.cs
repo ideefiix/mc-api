@@ -24,20 +24,6 @@ public class DatabaseContext : DbContext
         //Configure relationships here.
         modelBuilder.Entity<Player>().ToTable("Players");
         modelBuilder.Entity<PlayerItem>().ToTable("PlayerItems");
-        /*modelBuilder.Entity<PlayerEquippedItem>().ToTable("PlayerEquippedItems");
-        modelBuilder.Entity<PlayerEquippedItem>()
-            .HasOne(e => e.Player)
-            .WithMany()
-            .HasForeignKey(e => e.PlayerId);
-        modelBuilder.Entity<PlayerEquippedItem>()
-            .HasOne(e => e.ItemType)
-            .WithMany()
-            .HasForeignKey(e => e.ItemTypeId);
-        modelBuilder.Entity<PlayerEquippedItem>()
-            .HasOne(e => e.Item)
-            .WithOne();*/
-        /*modelBuilder.Entity<PlayerEquippedItem>().HasKey(e => new { e.PlayerId, e.ItemTypeId });*/
-        
         modelBuilder.Entity<Item>().ToTable("Items");
         modelBuilder.Entity<ItemImage>().ToTable("ItemImages");
         modelBuilder.Entity<ItemType>().ToTable("ItemTypes");
