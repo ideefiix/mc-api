@@ -13,6 +13,7 @@ public class DatabaseContext : DbContext
     public DbSet<PlayerItem> PlayerItems { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;
     public DbSet<ItemImage> ItemImages { get; set; } = null!;
+    public DbSet<ItemSpawnProbability> ItemSpawnProbabilities { get; set; } = null!;
     public DbSet<Mission> Missions { get; set; } = null!;
     public DbSet<PlayerMission> PlayerMissions { get; set; } = null!;
     public DbSet<ItemType> ItemTypes { get; set; } = null!;
@@ -28,6 +29,7 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Item>().ToTable("Items");
         modelBuilder.Entity<ItemImage>().ToTable("ItemImages");
         modelBuilder.Entity<ItemType>().ToTable("ItemTypes");
+        modelBuilder.Entity<ItemSpawnProbability>().ToTable("ItemSpawnProbabilities");
         modelBuilder.Entity<Equipment>().ToTable("Equipments");
         modelBuilder.Entity<Event>().ToTable("Events");
         modelBuilder.Entity<Mission>().ToTable("Missions");

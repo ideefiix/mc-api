@@ -59,7 +59,7 @@ public static class DatabaseInitializer
       
       context.SaveChanges();
       
-      // Load tasks
+      // Load Missions
       var missionList = JsonSerializer.Deserialize<MissionDto[]>(
          File.ReadAllText("DAL/DBinitialization/missions.json"));
 
@@ -71,12 +71,22 @@ public static class DatabaseInitializer
             MissionIndex = dto.MissionIndex,
             Name = dto.Name,
             Duration = dto.Duration,
-            ItemPool = JsonConverter.SerializeObject(dto.ItemPool),
             CompletionReward = JsonConverter.SerializeObject(dto.CompletionReward)
          });
       }
       
       context.Missions.AddRange(missionsToAdd);
+      context.SaveChanges();
+      
+      //Add itemPools to missions
+      var choppingWoodItem = new ItemSpawnProbability
+      {
+         BelongsToMission = context.Missions.Find(1),
+         ItemToSpawn = context.Items.Find(1),
+         Probability = 1
+      };
+
+      context.ItemSpawnProbabilities.Add(choppingWoodItem);
       context.SaveChanges();
       
       // SEED DATABASE
@@ -110,15 +120,15 @@ public static class DatabaseInitializer
 
       context.SaveChanges();
 
-      var eventData = new ItemSpawnEvent()
+      var eventData = new ItemSpawnEventData()
       {
          PlayerId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001"),
-         TaskId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001")
+         MissionId = 1
       };
       
       var @event = new Event
       {
-         EventType = typeof(ItemSpawnEvent).AssemblyQualifiedName,
+         EventType = typeof(ItemSpawnEventData).AssemblyQualifiedName,
          EventStatus = EventStatus.READY,
          CreatedAt = DateTime.UtcNow,
          HandledAt = null,

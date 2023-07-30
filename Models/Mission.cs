@@ -8,7 +8,7 @@ public class Mission
     public int MissionIndex { get; init; }
     public string Name { get; set; }
     public float Duration { get; set; } // In hours
-    public string ItemPool { get; init; }
+    public virtual ICollection<ItemSpawnProbability> ItemPool { get; init; }
     public string CompletionReward { get; init; }
 }
 
@@ -18,17 +18,12 @@ public class ItemReward
     public int Quantity { get; set; }
 }
 
-public class ItemProbability
-{
-    public int ItemIndex { get; set; }
-    public float Probability { get; set; }
-}
-
+// The Dto has deserialized the CompletionReward
 public class MissionDto
 {
     public int MissionIndex { get; init; }
     public string Name { get; set; }
     public float Duration { get; set; } // In hours
-    public ICollection<ItemProbability> ItemPool { get; init; }
+    public virtual ICollection<ItemSpawnProbability> ItemPool { get; init; }
     public ICollection<ItemReward> CompletionReward { get; init; }
 }

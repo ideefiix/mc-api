@@ -7,7 +7,7 @@ public class EventHandlerProvider
     public EventHandlerProvider(
         ItemSpawnHandler itemSpawnHandler)
     {
-        _handlerBindings.Add(typeof(ItemSpawnEvent), itemSpawnHandler);
+        _handlerBindings.Add(typeof(ItemSpawnEventData), itemSpawnHandler);
     }
     public EventHandlerBase GetHandler(Type eventType)
     {

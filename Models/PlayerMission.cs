@@ -6,7 +6,7 @@ public class PlayerMission
 {
     [Key]
     public Guid PlayerMissionId { get; set; }
-    public virtual Task Task { get; set; }
+    public virtual Mission Mission { get; set; }
     public virtual Player Player { get; set; }
     public virtual ICollection<Item> FoundItems { get; set; }
     public DateTime StartedTime { get; set; }
