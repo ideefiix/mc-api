@@ -17,8 +17,11 @@ public class PollReadyEventJob : IJob
     {
         Console.WriteLine("EXECUTING POLLING TASK");
         var events = _context.Events
-            .Where(e => e.EventStatus == EventStatus.READY);
+            .Where(e => e.EventStatus == EventStatus.READY)
+            .Where(e => e.HandleAt <= DateTime.UtcNow);
 
+
+        // CONCURRENT handling
         if (events.Any())
         {
             var runningHandlers = new List<Thread>();

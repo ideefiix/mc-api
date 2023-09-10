@@ -1,21 +1,29 @@
-﻿namespace Api.Models;
+﻿using Api.DAL;
+using Microsoft.EntityFrameworkCore;
+
+namespace Api.Models;
 
 public class EventHandlerProvider
 {
-    private readonly Dictionary<Type, EventHandlerBase> _handlerBindings = new Dictionary<Type, EventHandlerBase>();
     
-    public EventHandlerProvider(
-        ItemSpawnHandler itemSpawnHandler)
+    private readonly IDbContextFactory<DatabaseContext> _contextFactory;
+    
+    public EventHandlerProvider(IDbContextFactory<DatabaseContext> contextFactory)
     {
-        _handlerBindings.Add(typeof(ItemSpawnEventData), itemSpawnHandler);
+        _contextFactory = contextFactory;
     }
-    public EventHandlerBase GetHandler(Type eventType)
+    public EventHandlerBase GetHandler(Type eventData)
     {
-        var handler = _handlerBindings.GetValueOrDefault(eventType);
-        if (handler == null)
-            throw new KeyNotFoundException("The event type " + eventType +
+        if (eventData == null) throw new ArgumentException("EventData cannot be null when getting a handler");
+
+        if (eventData == typeof(ItemSpawnEventData)) return new ItemSpawnHandler(_contextFactory.CreateDbContext());
+        if (eventData == typeof(MissionEndedData)) return new MissionEndedHandler(_contextFactory.CreateDbContext());
+
+
+
+        throw new KeyNotFoundException("The event type " + eventData +
                                            " has no associated handler. Unable to process event.");
-        return handler;
+
     }
 
 }

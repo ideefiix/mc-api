@@ -11,6 +11,14 @@ public abstract class EventHandlerBase
     {
         _context = context;
     }
+
+    public Task HandleWithDbContext(Event @event)
+    {
+        using (_context)
+        {
+            return Handle(@event);
+        }
+    }
     
     public abstract Task Handle(Event @event);
     
@@ -20,7 +28,7 @@ public abstract class EventHandlerBase
         if (@event == null) throw new Exception("Event being handled is gone...");
 
         @event.EventStatus = EventStatus.SUCCESS;
-        @event.HandledAt = DateTime.UtcNow;
+        @event.HandleAt = DateTime.UtcNow;
 
         _context.Events.Update(@event);
         _context.SaveChanges();
@@ -32,21 +40,9 @@ public abstract class EventHandlerBase
         if (@event == null) throw new Exception("Event being handled is gone...");
 
         @event.EventStatus = EventStatus.FAILED;
-        @event.HandledAt = DateTime.UtcNow;
+        @event.HandleAt = DateTime.UtcNow;
 
         _context.Events.Update(@event);
         _context.SaveChanges();
-    }
-    
-    protected static T ExtractEventData<T>(Event e) where T : class
-    {
-        try
-        {
-            return JsonConvert.DeserializeObject<T>(e.Data);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Unable to deserialize(generic) message data to object.", ex);
-        }
     }
 }

@@ -75,4 +75,5 @@ public class Player
             throw new ArgumentException("Item to be equipped must be of a Equipment type");
         }
     }
+    
 }

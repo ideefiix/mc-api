@@ -11,133 +11,168 @@ namespace Api.DAL.DBinitialization;
 
 public static class DatabaseInitializer
 {
-   public static void Initialize(DatabaseContext context)
-   {
-      if (context.Players.Any())
-      {
-         return; //Database is already seeded
-      }
-      
-      //Load the itemTypes
+    public static void Initialize(DatabaseContext context)
+    {
+        if (context.Players.Any())
+        {
+            return; //Database is already seeded
+        }
 
-      var itemTypes = JsonSerializer.Deserialize<ItemType[]>(File.ReadAllText("DAL/DBinitialization/itemTypes.json"));
-      context.ItemTypes.AddRange(itemTypes);
-      context.SaveChanges();
-      
-      //Load the Items -> Connect with Image and type
+        //Load the itemTypes
 
-      var dtoList = JsonSerializer.Deserialize<RegistryItemFromJsonDTO[]>(
-         File.ReadAllText("DAL/DBinitialization/items.json"));
+        var itemTypes = JsonSerializer.Deserialize<ItemType[]>(File.ReadAllText("DAL/DBinitialization/itemTypes.json"));
+        context.ItemTypes.AddRange(itemTypes);
+        context.SaveChanges();
+
+        //Load the Items -> Connect with Image and type
+
+        var dtoList = JsonSerializer.Deserialize<RegistryItemFromJsonDTO[]>(
+            File.ReadAllText("DAL/DBinitialization/items.json"));
 
 
-      foreach (var dto in dtoList)
-      {
-         if (File.Exists(dto.ImagePath) == false) throw new ArgumentException("FilePath has no file");
-         byte[] imageBytes;
-         using (var image = Image.Load(dto.ImagePath))
-         {
-            using (MemoryStream m = new MemoryStream())
+        foreach (var dto in dtoList)
+        {
+            if (File.Exists(dto.ImagePath) == false) throw new ArgumentException("FilePath has no file");
+            byte[] imageBytes;
+            using (var image = Image.Load(dto.ImagePath))
             {
-               image.Save(m, new WebpEncoder()); // Images must be webp
-               imageBytes = m.ToArray();
+                using (MemoryStream m = new MemoryStream())
+                {
+                    image.Save(m, new WebpEncoder()); // Images must be webp
+                    imageBytes = m.ToArray();
+                }
             }
-         }
 
-         ItemImage imageEntity = new ItemImage();
-         imageEntity.Image = imageBytes;
+            ItemImage imageEntity = new ItemImage();
+            imageEntity.Image = imageBytes;
 
-         var item = new Item()
-         {
-            ItemIndex = dto.ItemIndex,
-            Name = dto.Name,
-            Description = dto.Description,
-            Type = itemTypes.First(type => type.TypeId == dto.TypeId),
-            Image = imageEntity,
-         };
-         context.Items.AddRange(item);
-      }
-      
-      context.SaveChanges();
-      
-      // Load Missions
-      var missionList = JsonSerializer.Deserialize<MissionDto[]>(
-         File.ReadAllText("DAL/DBinitialization/missions.json"));
+            var item = new Item()
+            {
+                ItemIndex = dto.ItemIndex,
+                Name = dto.Name,
+                Description = dto.Description,
+                Type = itemTypes.First(type => type.TypeId == dto.TypeId),
+                Image = imageEntity,
+            };
+            context.Items.AddRange(item);
+        }
 
-      var missionsToAdd = new List<Mission>();
-      foreach (var dto in missionList)
-      {
-         missionsToAdd.Add(new Mission
-         {
-            MissionIndex = dto.MissionIndex,
-            Name = dto.Name,
-            Duration = dto.Duration,
-            CompletionReward = JsonConverter.SerializeObject(dto.CompletionReward)
-         });
-      }
-      
-      context.Missions.AddRange(missionsToAdd);
-      context.SaveChanges();
-      
-      //Add itemPools to missions
-      var choppingWoodItem = new ItemSpawnProbability
-      {
-         BelongsToMission = context.Missions.Find(1),
-         ItemToSpawn = context.Items.Find(1),
-         Probability = 1
-      };
+        context.SaveChanges();
 
-      context.ItemSpawnProbabilities.Add(choppingWoodItem);
-      context.SaveChanges();
-      
-      // SEED DATABASE
-      
-      string hashedPassword = BCrypt.Net.BCrypt.HashPassword("admin");
+        // Load Missions
+        var missionList = JsonSerializer.Deserialize<MissionDto[]>(
+            File.ReadAllText("DAL/DBinitialization/missions.json"));
 
-      var players = new Player[]
-      {
-         new Player { PlayerId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001"), PlayerName = "admin", PasswordHash = hashedPassword, MaxHp = 100, Hp = 100, Dmg = 0, Defence = 0 }
-      };
-      context.Players.AddRange(players);
+        var missionsToAdd = new List<Mission>();
+        foreach (var dto in missionList)
+        {
+            missionsToAdd.Add(new Mission
+            {
+                MissionIndex = dto.MissionIndex,
+                Name = dto.Name,
+                Duration = dto.Duration,
+                CompletionReward = JsonConverter.SerializeObject(dto.CompletionReward)
+            });
+        }
 
-      var itemEntity = context.Items.Find(1);
-      var itemEntity2 = context.Items.Find(2);
-      
-      var playerItem = new PlayerItem()
-      {
-         Item = itemEntity,
-         Owner = players[0],
-         Quantity = 5
-      };
-      var playerItem2 = new PlayerItem()
-      {
-         Item = itemEntity2,
-         Owner = players[0],
-         Quantity = 1
-      };
+        context.Missions.AddRange(missionsToAdd);
+        context.SaveChanges();
 
-      context.PlayerItems.Add(playerItem);
-      context.PlayerItems.Add(playerItem2);
+        //TODO create a JSON file for this
+        //Add itemPools to missions
+        var choppingWoodItem = new ItemSpawnProbability
+        {
+            BelongsToMission = context.Missions.Find(1),
+            ItemToSpawn = context.Items.Find(1),
+            Probability = 1
+        };
 
-      context.SaveChanges();
+        context.ItemSpawnProbabilities.Add(choppingWoodItem);
+        context.SaveChanges();
 
-      var eventData = new ItemSpawnEventData()
-      {
-         PlayerId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001"),
-         MissionId = 1
-      };
-      
-      var @event = new Event
-      {
-         EventType = typeof(ItemSpawnEventData).AssemblyQualifiedName,
-         EventStatus = EventStatus.READY,
-         CreatedAt = DateTime.UtcNow,
-         HandledAt = null,
-         Ntries = 0,
-         Data = JsonConverter.SerializeObject(eventData),
-      };
+        // SEED DATABASE
 
-      context.Events.Add(@event);
-      context.SaveChanges();
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword("admin");
 
-   }
+        var players = new Player[]
+        {
+            new Player
+            {
+                PlayerId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001"), PlayerName = "admin",
+                PasswordHash = hashedPassword, MaxHp = 100, Hp = 100, Dmg = 0, Defence = 0
+            }
+        };
+        context.Players.AddRange(players);
+
+        var itemEntity = context.Items.Find(1);
+        var itemEntity2 = context.Items.Find(2);
+
+        var playerItem = new PlayerItem()
+        {
+            Item = itemEntity,
+            Owner = players[0],
+            Quantity = 5
+        };
+        var playerItem2 = new PlayerItem()
+        {
+            Item = itemEntity2,
+            Owner = players[0],
+            Quantity = 1
+        };
+
+        context.PlayerItems.Add(playerItem);
+        context.PlayerItems.Add(playerItem2);
+
+        context.SaveChanges();
+
+        var spawnItemEvent = new Event
+        {
+            EventType = typeof(ItemSpawnEventData).AssemblyQualifiedName,
+            EventStatus = EventStatus.READY,
+            CreatedAt = DateTime.UtcNow,
+            HandleAt = DateTime.UtcNow.AddSeconds(10),
+            Ntries = 0,
+            Data = "MANUALLY INSERTING DATA...",
+        };
+
+        var endMissionEvent = new Event
+        {
+            EventType = typeof(MissionEndedData).AssemblyQualifiedName,
+            EventStatus = EventStatus.READY,
+            CreatedAt = DateTime.UtcNow,
+            HandleAt = DateTime.UtcNow.AddMinutes(2),
+            Ntries = 0,
+            Data = "MANUALLY INSERTING DATA...",
+        };
+
+        var playerMission = new PlayerMission
+        {
+            PlayerMissionId = new Guid(),
+            Mission = missionsToAdd[0],
+            Player = players[0],
+            StartTime = DateTime.UtcNow,
+            FinishTime = DateTime.UtcNow.AddMinutes(2),
+            HpThreshold = 100,
+            CompletionEvent = endMissionEvent,
+            ItemSpawnEvent = spawnItemEvent
+        };
+
+        context.PlayerMissions.Add(playerMission);
+        context.SaveChanges();
+        // Add EventData to the mission
+        var spawnItemData = new ItemSpawnEventData()
+        {
+            PlayerId = Guid.Parse("43321d77-3d6e-40e6-8d1e-114688272001"),
+            PlayerMissionId = playerMission.PlayerMissionId
+        };
+        var endMissionData = new MissionEndedData
+        {
+            PlayerMissionId = playerMission.PlayerMissionId
+        };
+
+        playerMission.ItemSpawnEvent.Data = JsonConverter.SerializeObject(spawnItemData);
+        playerMission.CompletionEvent.Data = JsonConverter.SerializeObject(endMissionData);
+        context.PlayerMissions.Update(playerMission);
+        context.SaveChanges();
+    }
 }

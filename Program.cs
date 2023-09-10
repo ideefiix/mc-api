@@ -57,6 +57,11 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseLazyLoadingProxies()
         .UseNpgsql(builder.Configuration.GetConnectionString("DatabaseContext") ?? throw new InvalidOperationException("Connection string 'DatabaseContext' not found.")));
 
+builder.Services.AddDbContextFactory<DatabaseContext>(options =>
+    options.UseLazyLoadingProxies()
+        .UseNpgsql(builder.Configuration.GetConnectionString("DatabaseContext") ??
+                   throw new InvalidOperationException("Connection string 'DatabaseContext' not found.")));
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -102,8 +107,9 @@ builder.Services.AddQuartz(q =>
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
-builder.Services.AddScoped<ItemSpawnHandler>();
-builder.Services.AddScoped<EventHandlerProvider>();
+/*builder.Services.AddScoped<ItemSpawnHandler>();
+builder.Services.AddScoped<MissionEndedHandler>();*/
+builder.Services.AddSingleton<EventHandlerProvider>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
